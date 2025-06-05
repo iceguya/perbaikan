@@ -15,11 +15,62 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <!-- Navigation untuk Admin -->
+                    @if(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin Panel') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('Manage Users') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('Reports') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Navigation untuk Teknisi -->
+                    @if(Auth::user()->role === 'teknisi')
+                        <x-nav-link :href="route('teknisi.dashboard')" :active="request()->routeIs('teknisi.*')">
+                            {{ __('Teknisi Panel') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('Work Orders') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('Equipment') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Navigation untuk User -->
+                    @if(Auth::user()->role === 'user')
+                        <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.*')">
+                            {{ __('My Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('Submit Request') }}
+                        </x-nav-link>
+                        <x-nav-link href="#">
+                            {{ __('My Requests') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Role Badge -->
+                <div class="px-3 py-1 mr-3 text-xs font-semibold rounded-full 
+                    @if(Auth::user()->role === 'admin') 
+                        bg-red-100 text-red-800
+                    @elseif(Auth::user()->role === 'teknisi') 
+                        bg-blue-100 text-blue-800
+                    @else 
+                        bg-green-100 text-green-800
+                    @endif">
+                    {{ strtoupper(Auth::user()->role) }}
+                </div>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -37,6 +88,16 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
+                        <!-- Admin-only dropdown items -->
+                        @if(Auth::user()->role === 'admin')
+                            <x-dropdown-link href="#">
+                                {{ __('System Settings') }}
+                            </x-dropdown-link>
+                            <x-dropdown-link href="#">
+                                {{ __('User Management') }}
+                            </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -70,6 +131,45 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <!-- Responsive Navigation untuk Admin -->
+            @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin Panel') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('Manage Users') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('Reports') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Responsive Navigation untuk Teknisi -->
+            @if(Auth::user()->role === 'teknisi')
+                <x-responsive-nav-link :href="route('teknisi.dashboard')" :active="request()->routeIs('teknisi.*')">
+                    {{ __('Teknisi Panel') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('Work Orders') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('Equipment') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Responsive Navigation untuk User -->
+            @if(Auth::user()->role === 'user')
+                <x-responsive-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.*')">
+                    {{ __('My Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('Submit Request') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="#">
+                    {{ __('My Requests') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -77,12 +177,23 @@
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="text-xs text-gray-400 mt-1">Role: {{ strtoupper(Auth::user()->role) }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                <!-- Admin-only responsive items -->
+                @if(Auth::user()->role === 'admin')
+                    <x-responsive-nav-link href="#">
+                        {{ __('System Settings') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link href="#">
+                        {{ __('User Management') }}
+                    </x-responsive-nav-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
