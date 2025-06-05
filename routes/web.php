@@ -43,21 +43,21 @@ Route::middleware('auth')->group(function () {
     // ✅ Dashboard khusus Admin
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin', function () {
-            return view('dashboard.admin');
+            return view('dashboard', ['role' => 'Admin']);
         })->name('admin.dashboard');
     });
 
     // ✅ Dashboard khusus Teknisi
     Route::middleware(['role:teknisi'])->group(function () {
         Route::get('/teknisi', function () {
-            return view('dashboard.teknisi');
+            return view('dashboard', ['role' => 'Teknisi']);
         })->name('teknisi.dashboard');
     });
 
     // ✅ Dashboard khusus User
     Route::middleware(['role:user'])->group(function () {
         Route::get('/user', function () {
-            return view('dashboard.user');
+            return view('dashboard', ['role' => 'User']);
         })->name('user.dashboard');
     });
 });
