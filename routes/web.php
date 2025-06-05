@@ -15,7 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// ✅ Route ini HARUS ADA karena Breeze redirect ke route('dashboard')
 // Otomatis redirect ke dashboard sesuai role
 Route::get('/dashboard', function () {
     $user = Auth::user();
@@ -32,36 +31,36 @@ Route::get('/dashboard', function () {
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 🔒 Grup route untuk pengguna yang sudah login
+//Grup route untuk pengguna yang sudah login
 Route::middleware('auth')->group(function () {
 
-    // ✅ Route bawaan Breeze untuk edit profil
+    //   Route bawaan Breeze untuk edit profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // ✅ Dashboard khusus Admin
+    //  Dashboard khusus Admin
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin', function () {
-            return view('dashboard', ['role' => 'Admin']);
+            return view('dashboard.admin', ['role' => 'Admin']);
         })->name('admin.dashboard');
     });
 
-    // ✅ Dashboard khusus Teknisi
+    //   Dashboard khusus Teknisi
     Route::middleware(['role:teknisi'])->group(function () {
         Route::get('/teknisi', function () {
-            return view('dashboard', ['role' => 'Teknisi']);
+            return view('dashboard.teknisi', ['role' => 'Teknisi']);
         })->name('teknisi.dashboard');
     });
 
-    // ✅ Dashboard khusus User
+    //   Dashboard khusus User
     Route::middleware(['role:user'])->group(function () {
         Route::get('/user', function () {
-            return view('dashboard', ['role' => 'User']);
+            return view('dashboard.user', ['role' => 'User']);
         })->name('user.dashboard');
     });
 });
 
-// ✅ Import route bawaan Breeze (login, register, dll)
+//   Import route bawaan Breeze (login, register, dll)
 require __DIR__.'/auth.php';
 
