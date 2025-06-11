@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardApiController; // Import controller API
 use App\Http\Controllers\UserController;       // Import controller User
+use App\Http\Controllers\User\RequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,10 @@ Route::middleware('auth')->group(function () {
             // Ganti 'dashboard.user' jika nama view Anda berbeda
             return view('dashboard.user', ['role' => 'User']);
         })->name('user.dashboard');
+
+        Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
+        Route::get('requests/create', [RequestController::class, 'create'])->name('requests.create');
+        Route::post('requests', [RequestController::class, 'store'])->name('requests.store');
         // Tambahkan rute user lainnya di sini
     });
 

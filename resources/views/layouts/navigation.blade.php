@@ -40,14 +40,11 @@
                     @endif
 
                     <!-- Navigation untuk User -->
-                    @if(Auth::user()->role === 'user')
-                        <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.*')">
-                            {{ __('My Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link href="#">
+                    @if(Auth::check() && Auth::user()->role === 'user')
+                        <x-nav-link :href="route('user.requests.create')" :active="request()->routeIs('user.requests.create')">
                             {{ __('Submit Request') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
+                        <x-nav-link :href="route('user.requests.index')" :active="request()->routeIs('user.requests.index')">
                             {{ __('My Requests') }}
                         </x-nav-link>
                     @endif
