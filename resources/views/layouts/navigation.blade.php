@@ -21,7 +21,7 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin Panel') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                             {{ __('Manage Users') }}
                         </x-nav-link>
                         <x-nav-link href="#">
@@ -34,11 +34,8 @@
                         <x-nav-link :href="route('teknisi.dashboard')" :active="request()->routeIs('teknisi.*')">
                             {{ __('Teknisi Panel') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
+                        <x-nav-link href="workorder.blade.php" :active="request()->routeIs('teknisi.*')">
                             {{ __('Work Orders') }}
-                        </x-nav-link>
-                        <x-nav-link href="#">
-                            {{ __('Equipment') }}
                         </x-nav-link>
                     @endif
 
@@ -137,7 +134,7 @@
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
                     {{ __('Admin Panel') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="#">
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                     {{ __('Manage Users') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="#">
@@ -152,9 +149,6 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="#">
                     {{ __('Work Orders') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="#">
-                    {{ __('Equipment') }}
                 </x-responsive-nav-link>
             @endif
 

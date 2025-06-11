@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardApiController; // Import controller API
+use App\Http\Controllers\UserController;       // Import controller User
 
 /*
 |--------------------------------------------------------------------------
@@ -31,36 +34,67 @@ Route::get('/dashboard', function () {
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-//Grup route untuk pengguna yang sudah login
+// Grup route untuk pengguna yang sudah login
 Route::middleware('auth')->group(function () {
 
-    //   Route bawaan Breeze untuk edit profil
+    // Route bawaan Breeze untuk edit profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    //  Dashboard khusus Admin
+    // Dashboard dan fitur khusus Admin
+    // Pastikan 'admin.dashboard' mengarah ke view dashboard yang sebenarnya Anda gunakan
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin', function () {
-            return view('dashboard.admin', ['role' => 'Admin']);
+            // Ini akan me-render dashboard admin yang sudah kamu buat sebelumnya
+            // Jika dashboard admin adalah layout utama, maka bisa langsung return view
+            return view('dashboard.admin'); // Ganti 'dashboard.admin' jika nama view Anda 'admin.dashboard'
         })->name('admin.dashboard');
+
+        // Route untuk Manajemen Pembayaran (hanya bisa diakses Admin)
+        Route::get('/manage-payments', [PaymentController::class, 'index'])->name('payments.index');
+
+        // Route untuk Manajemen Pengguna (hanya bisa diakses Admin)
+        Route::get('/manage-users', [UserController::class, 'index'])->name('users.index'); // <-- Ini yang ditambahkan
+        Route::get('/manage-users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // Tampilkan form edit
+        Route::put('/manage-users/{user}', [UserController::class, 'update'])->name('users.update'); // Proses update data
+        Route::delete('/manage-users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); // Proses hapus data
+        // Anda bisa menambahkan rute admin lain di sini
+        // Contoh: Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders');
     });
 
-    //   Dashboard khusus Teknisi
+    // Dashboard dan fitur khusus Teknisi
     Route::middleware(['role:teknisi'])->group(function () {
         Route::get('/teknisi', function () {
+            // Ganti 'dashboard.teknisi' jika nama view Anda berbeda
             return view('dashboard.teknisi', ['role' => 'Teknisi']);
         })->name('teknisi.dashboard');
+        // Tambahkan rute teknisi lainnya di sini
+        Route::get('/api/teknisi-orders', [DashboardApiController::class, 'getTechnicianSpecificOrders'])->name('api.teknisi.orders');
     });
 
-    //   Dashboard khusus User
+    // Dashboard dan fitur khusus User
     Route::middleware(['role:user'])->group(function () {
         Route::get('/user', function () {
+            // Ganti 'dashboard.user' jika nama view Anda berbeda
             return view('dashboard.user', ['role' => 'User']);
         })->name('user.dashboard');
+        // Tambahkan rute user lainnya di sini
     });
+
+    // =========================================================================
+    // API Dashboard (TEMPATKAN DI SINI JIKA MAU DIAUTENTIKASI DULU)
+    // Jika API ini hanya untuk data dashboard yang diakses dari frontend yang sudah login,
+    // maka letakkan di dalam middleware 'auth' seperti ini.
+    // Pastikan juga Anda sudah mengimpor DashboardApiController di atas.
+    // =========================================================================
+    Route::get('/api/order-stats', [DashboardApiController::class, 'getOrderStats']);
+    Route::get('/api/revenue-recap', [DashboardApiController::class, 'getRevenueRecap']);
+    Route::get('/api/technician-orders', [DashboardApiController::class, 'getTechnicianOrders']);
+    Route::get('/api/user-stats', [DashboardApiController::class, 'getUserStats']); // Data statistik user untuk dashboard
+    Route::get('/api/activity-log', [DashboardApiController::class, 'getActivityLog']);
 });
 
-//   Import route bawaan Breeze (login, register, dll)
-require __DIR__.'/auth.php';
 
+// Import route bawaan Breeze (login, register, dll)
+require __DIR__.'/auth.php';
