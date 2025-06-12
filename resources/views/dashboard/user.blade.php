@@ -20,12 +20,12 @@
                         </div>
                     </div>
                     <div class="mt-12 lg:mt-0 lg:col-span-5 lg:flex lg:justify-center">
-                        <img class="max-w-full h-auto rounded-lg shadow-2xl lg:max-h-[400px]" src="https://images.unsplash.com/photo-1598439213716-fe5cdf259140?q=80&w=1000&auto=format&fit=crop" alt="Teknisi sedang memperbaiki laptop">
+                        <img class="max-w-full h-auto rounded-lg shadow-2xl lg:max-h-[400px]" src="{{ asset('storage/app/public/images/Teknisi.jpg') }}" alt="Teknisi sedang memperbaiki perangkat">
                     </div>
                 </div>
             </div>
         </div>
-
+    
         {{-- Layanan Berdasarkan Kategori Section --}}
         <div class="py-16 bg-white dark:bg-gray-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

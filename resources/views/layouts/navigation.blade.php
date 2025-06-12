@@ -18,14 +18,24 @@
 
                     <!-- Navigation untuk Admin -->
                     @if(Auth::user()->role === 'admin')
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Admin Panel') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                        <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.index')">
+                            {{ __('Manage Orders') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                             {{ __('Manage Users') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
-                            {{ __('Reports') }}
+                        
+                        {{-- LINK NOTIFIKASI BARU --}}
+                        <x-nav-link href="#" :active="false" class="flex items-center">
+                            <i class="fas fa-bell"></i>
+                            @if(Auth::user()->unreadNotifications->count() > 0)
+                                <span class="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    {{ Auth::user()->unreadNotifications->count() }}
+                                </span>
+                            @endif
                         </x-nav-link>
                     @endif
 
