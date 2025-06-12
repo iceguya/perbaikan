@@ -149,55 +149,41 @@ class DashboardApiController extends Controller
     }
 
     public function getTechnicianSpecificOrders(Request $request)
-    {
-        try {
-            $user = $request->user(); // Dapatkan user yang sedang login
+{
+    try {
+        $user = $request->user();
 
-            // Pastikan user adalah teknisi
-            if ($user->role !== 'teknisi') {
-                return response()->json(['message' => 'Akses ditolak. Hanya teknisi yang bisa melihat pesanan ini.'], 403);
-            }
-
-            // Ambil pesanan yang ditugaskan kepada teknisi ini
-            // Asumsi model Order punya kolom 'assigned_to_user_id' atau sejenisnya
-            // Dan statusnya bukan 'completed' atau 'canceled'
-            $orders = Order::where('assigned_to_user_id', $user->id)
-                           ->whereNotIn('status', ['completed', 'canceled', 'rejected']) // Exclude status yang tidak perlu ditampilkan
-                           ->orderBy('created_at', 'desc')
-                           ->get([
-                               'id',
-                               'description',
-                               'status',
-                               'customer_name', // Contoh kolom lain yang mungkin relevan
-                               'customer_address' // Contoh kolom lain yang mungkin relevan
-                           ]);
-
-            // Transformasi data agar sesuai dengan format JavaScript Anda (jika diperlukan)
-            $formattedOrders = $orders->map(function ($order) {
-                // Sesuaikan status dari backend ke status yang diharapkan JS frontend Anda
-                $statusMapping = [
-                    'pending' => 'pending',        // Menunggu penugasan
-                    'assigned' => 'in-process',    // Sudah ditugaskan, sedang diproses teknisi
-                    'in_progress' => 'in-process', // Atau status lain untuk sedang dikerjakan
-                    'completed' => 'completed',
-                    // Tambahkan mapping lain jika ada status di backend yang berbeda dengan frontend
-                ];
-
-                return [
-                    'id' => $order->id, // Menggunakan ID dari database, bisa juga order_number
-                    'description' => $order->description,
-                    'status' => $statusMapping[$order->status] ?? $order->status, // Fallback jika tidak ada mapping
-                    'details' => $order->customer_name . ' - ' . $order->customer_address, // Contoh detail
-                ];
-            });
-
-
-            return response()->json($formattedOrders);
-
-        } catch (\Exception $e) {
-            \Log::error('Error fetching technician specific orders: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to fetch technician orders.'], 500);
+        if ($user->role !== 'teknisi') {
+            return response()->json(['message' => 'Akses ditolak.'], 403);
         }
+
+        // Ganti Model dari Order ke ServiceRequest dan sesuaikan nama kolom
+        $orders = ServiceRequest::where('assigned_to_id', $user->id) // Kolom yang benar adalah 'assigned_to_id'
+                       ->whereIn('status', ['assigned', 'in_progress']) // Hanya tampilkan yang relevan
+                       ->with('user') // Ambil data user pembuat request
+                       ->orderBy('created_at', 'desc')
+                       ->get();
+
+        $formattedOrders = $orders->map(function ($order) {
+            $statusMapping = [
+                'assigned' => 'in-process', // Map 'assigned' dari backend ke 'in-process' untuk display di frontend
+                'in_progress' => 'in-process',
+            ];
+
+            return [
+                'id' => 'REQ-'.$order->id,
+                'description' => $order->description,
+                'status' => $statusMapping[$order->status] ?? $order->status,
+                'details' => 'Dari: ' . ($order->user->name ?? 'N/A') . ' | Perangkat: ' . $order->device_type,
+            ];
+        });
+
+        return response()->json($formattedOrders);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching technician specific orders: ' . $e->getMessage());
+        return response()->json(['error' => 'Gagal memuat pesanan teknisi.'], 500);
     }
+}
 
 }

@@ -41,13 +41,13 @@
 
                     <!-- Navigation untuk User -->
                     @if(Auth::user()->role === 'user')
-                        <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.*')">
+                        <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
                             {{ __('My Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
+                        <x-nav-link :href="route('requests.create')" :active="request()->routeIs('requests.create')">
                             {{ __('Submit Request') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
+                        <x-nav-link :href="route('requests.index')" :active="request()->routeIs('requests.index')">
                             {{ __('My Requests') }}
                         </x-nav-link>
                     @endif

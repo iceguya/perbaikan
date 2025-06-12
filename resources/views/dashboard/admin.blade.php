@@ -40,7 +40,7 @@
                     <ul id="daftarPesananTeknisi" class="text-sm text-gray-700 list-disc pl-5 mb-4 space-y-1">
                         <li><span class="text-gray-500">Memuat pesanan...</span></li>
                     </ul>
-                    <a href="/assign-orders" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md text-sm transition duration-200">
+                    <a href="{{ route('admin.orders.index') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md text-sm transition duration-200">
                         Lihat & Tugaskan Pesanan
                     </a>
                 </div>

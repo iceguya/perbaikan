@@ -63,6 +63,19 @@ Route::middleware('auth')->group(function () {
         // Contoh: Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders');
     });
 
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin', function () {
+            return view('dashboard.admin');
+        })->name('admin.dashboard');
+    
+        // ... route admin lainnya
+        
+        // RUTE BARU UNTUK MANAJEMEN ORDER
+        Route::get('/admin/assign-orders', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'index'])->name('admin.orders.index');
+        Route::patch('/admin/orders/{serviceRequest}/approve', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'approve'])->name('admin.orders.approve');
+        Route::post('/admin/orders/{serviceRequest}/assign', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'assign'])->name('admin.orders.assign');
+    });
+
     // Dashboard dan fitur khusus Teknisi
     Route::middleware(['role:teknisi'])->group(function () {
         Route::get('/teknisi', function () {
@@ -76,10 +89,13 @@ Route::middleware('auth')->group(function () {
     // Dashboard dan fitur khusus User
     Route::middleware(['role:user'])->group(function () {
         Route::get('/user', function () {
-            // Ganti 'dashboard.user' jika nama view Anda berbeda
             return view('dashboard.user', ['role' => 'User']);
         })->name('user.dashboard');
-        // Tambahkan rute user lainnya di sini
+        
+        // Rute untuk Submit dan My Requests
+        Route::get('/my-requests', [App\Http\Controllers\ServiceRequestController::class, 'index'])->name('requests.index');
+        Route::get('/requests/create', [App\Http\Controllers\ServiceRequestController::class, 'create'])->name('requests.create');
+        Route::post('/requests', [App\Http\Controllers\ServiceRequestController::class, 'store'])->name('requests.store');
     });
 
     // =========================================================================
