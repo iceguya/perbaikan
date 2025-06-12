@@ -9,6 +9,15 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
+
+public function teknisi()
+{
+    return $this->state(fn (array $attributes) => [
+        'role' => 'teknisi',
+    ]);
+}
+
+
 class UserFactory extends Factory
 {
     /**
