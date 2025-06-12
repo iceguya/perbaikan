@@ -74,7 +74,7 @@
     <nav class="bg-blue-800 p-4 fixed w-full z-10 top-0 shadow-lg dark:bg-gray-900">
         <div class="container mx-auto flex justify-between items-center">
             <a href="#home" class="flex-shrink-0">
-                <img src="{{ asset('storage/images/logo_Hirawr.png') }}" alt="Hirawr Logo" class="h-10 w-auto">
+                <img src="{{ asset('images/logo.png') }}" alt="Hirawr Logo" class="h-10 w-auto">
             </a>
             <div class="hidden md:flex space-x-8">
                 <a href="#home" class="text-blue-200 hover:text-white transition duration-300">Home</a>
@@ -109,7 +109,7 @@
             <div class="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-center">
                 <div class="lg:col-span-7 text-center lg:text-left animate-fade-in">
                     <h1 class="text-4xl font-extrabold text-white sm:text-5xl lg:mt-6 xl:text-6xl tracking-tight">
-                        <img src="{{ asset('storage/images/logo_Hirawr.png') }}" alt="Hirawr Store Logo" class="h-20 sm:h-24 lg:h-32 w-auto mx-auto lg:mx-0 mb-4">
+                        <img src="{{ asset('images/logo.png') }}" alt="Hirawr Store Logo" class="h-20 sm:h-24 lg:h-32 w-auto mx-auto lg:mx-0 mb-4">
                         <span class="block text-blue-200 dark:text-blue-300">Kebutuhan Elektronik Anda!</span>
                     </h1>
                     <p class="mt-3 text-base text-blue-100 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl dark:text-gray-300">
@@ -117,7 +117,7 @@
                     </p>
                 </div>
                 <div class="mt-12 lg:mt-0 lg:col-span-5 lg:flex lg:justify-center lg:items-center animate-fade-in" style="animation-delay: 0.2s;">
-                    <img src="{{ asset('storage/images/teknisi_Hirawr.jpeg') }}" 
+                    <img src="{{ asset('images/teknisi_Hirawr.jpg') }}" 
                          alt="Teknisi sedang memperbaiki laptop" 
                          class="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-cover rounded-full shadow-2xl border-4 border-white dark:border-gray-700">
                 </div>
