@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Models\ServiceRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,14 +11,12 @@ class WorkOrderCompleted extends Notification
 {
     use Queueable;
 
-    protected $serviceRequest;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(ServiceRequest $serviceRequest)
+    public function __construct()
     {
-        $this->serviceRequest = $serviceRequest;
+        //
     }
 
     /**
@@ -29,7 +26,18 @@ class WorkOrderCompleted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database']; // Kita akan simpan notifikasi ke database
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -39,12 +47,8 @@ class WorkOrderCompleted extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        // Data yang akan disimpan di kolom 'data' pada tabel notifications
         return [
-            'service_request_id' => $this->serviceRequest->id,
-            'technician_name' => $this->serviceRequest->technician->name,
-            'message' => "Pekerjaan untuk request #{$this->serviceRequest->id} telah diselesaikan.",
-            'url' => route('admin.orders.index'), // Link saat notifikasi di-klik
+            //
         ];
     }
 }

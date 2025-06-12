@@ -188,7 +188,7 @@
             // Placeholder: Di sini Anda akan memanggil API Laravel untuk mengupdate status order di database
             // Misalnya: await fetch(`/teknisi/orders/${orderId}/update-status`, { method: 'POST', body: JSON.stringify({ status: newStatus }) });
 
-            alert(`Pesanan ${orderId} diubah ke status: ${newStatus}. (Ini hanya simulasi, belum terhubung ke backend untuk update status)`);
+            // alert(`Pesanan ${orderId} diubah ke status: ${newStatus}. (Ini hanya simulasi, belum terhubung ke backend untuk update status)`);
 
             // Setelah update berhasil di backend, refresh daftar pesanan
             const updatedOrders = await fetchTechnicianOrders();
