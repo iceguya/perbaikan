@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade'); // Foreign key ke tabel orders
+            $table->string('payment_method');
+            $table->decimal('amount', 10, 2); // Penting: tipe data decimal untuk jumlah uang
+            $table->string('status')->default('pending'); // Contoh: 'pending', 'completed', 'failed', 'refunded'
+            $table->string('transaction_id')->nullable(); // ID transaksi dari payment gateway (jika ada)
+            $table->timestamp('payment_date')->nullable(); // Penting: tipe data timestamp untuk tanggal
+            $table->text('notes')->nullable();
+            $table->timestamps(); // created_at dan updated_at
         });
     }
 

@@ -44,7 +44,7 @@
                         <x-nav-link :href="route('user.requests.create')" :active="request()->routeIs('user.requests.create')">
                             {{ __('Submit Request') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('user.requests.index')" :active="request()->routeIs('user.requests.index')">
+                        <x-nav-link href="#">
                             {{ __('My Requests') }}
                         </x-nav-link>
                     @endif

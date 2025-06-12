@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Order;
 use App\Models\Payment;
 use Faker\Factory as Faker;
+use App\Models\UserRequest; 
 
 class PaymentsTableSeeder extends Seeder
 {

@@ -1,56 +1,45 @@
 <?php
-// File: app/Http/Controllers/User/RequestController.php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\ServiceRequest; // Pastikan model di-import
 use Illuminate\Http\Request;
+use App\Models\UserRequest; // Pastikan model Request Anda di-import dengan nama yang benar, misal UserRequest
 
 class RequestController extends Controller
 {
     /**
-     * Menampilkan halaman "My Requests" dengan data dari database.
+     * Display a listing of the requests.
      */
     public function index()
     {
-        // Ambil semua request milik user yang sedang login, urutkan dari yang terbaru
-        $requests = auth()->user()->serviceRequests()->latest()->get();
-        
-        // Kirim data variabel $requests ke view
-        return view('user.requests.index', ['requests' => $requests]);
+        // Ambil permintaan yang dibuat oleh user yang sedang login
+        // Asumsi model User memiliki relasi 'requests' ke model UserRequest
+        $requests = auth()->user()->requests()->latest()->paginate(10);
+
+        return view('user.requests.index', compact('requests')); // Ini akan me-render daftar permintaan
     }
 
     /**
-     * Menampilkan form "Submit Request".
+     * Show the form for creating a new request.
      */
     public function create()
     {
-        return view('user.requests.create');
+        return view('user.requests.create'); // Ini akan me-render form 'buat permintaan'
     }
 
-    /**
-     * Memvalidasi dan menyimpan data dari form ke database.
-     */
+    // Anda juga akan membutuhkan method 'store' untuk menyimpan data request
+    /*
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'device_type' => 'required|string|max:100',
-            'brand'       => 'required|string|max:100',
-            'series'      => 'nullable|string|max:100',
-            'complaint'   => 'required|string|min:20',
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
+            // Tambahkan validasi lain sesuai kolom tabel permintaan Anda
         ]);
 
-        // Simpan data ke database menggunakan relasi
-        auth()->user()->serviceRequests()->create([
-            'device_type' => $validatedData['device_type'],
-            'brand'       => $validatedData['brand'],
-            'series_model'=> $validatedData['series'], // sesuaikan dengan nama kolom di migrasi
-            'description' => $validatedData['complaint'],
-            'status'      => 'pending', // Status awal saat dibuat
-        ]);
+        auth()->user()->requests()->create($validatedData); // Asumsi user memiliki relasi 'requests'
 
-        // Redirect ke halaman "My Requests" dengan pesan sukses
-        return redirect()->route('user.requests.index')->with('status', 'Permintaan servis Anda telah berhasil dikirim!');
+        return redirect()->route('user.requests.index')->with('success', 'Permintaan Anda berhasil diajukan!');
     }
+    */
 }

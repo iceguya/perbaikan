@@ -14,9 +14,6 @@
             </div>
 
             <div class="mt-10 mb-6 border-b pb-4 border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800">Panel Admin</h3>
-                <p class="text-gray-600 mt-2">Di sini Anda dapat mengelola pengaturan admin, melihat statistik penting, dan mengelola pesanan.</p>
-            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
