@@ -6,6 +6,7 @@
     <title>Hirawr Store</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2j+om7RzJFWrVfB+b5QyK/aa4ZLGw/HjP4Sg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -242,7 +243,7 @@
                         <a href="http://wa.me/082160718811" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-icon-circle">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        </div>
+                    </div>
                 </div>
 
                 <div class="text-left lg:text-right">
@@ -252,7 +253,7 @@
                         <li><a href="#testimoni" class="hover:text-white transition duration-200">Testimoni</a></li>
                         <li><a href="#contact" class="hover:text-white transition duration-200">Contact Us</a></li>
                         <li><a href="mailto:info@subakara295@gmail.com" class="hover:text-white transition duration-200">Email Us</a></li>
-                        <li><span class="cursor-default">Jl. Raya Contoh No. 123, Bandar Lampung</span></li>
+                        <li><span class="cursor-default">Jl. Kencana, Kp. Baru, Kec. Kedaton, Kota Bandar Lampung, Lampung 35141</span></li>
                     </ul>
                 </div>
             </div>
