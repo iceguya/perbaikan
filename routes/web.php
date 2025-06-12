@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardApiController; // Import controller API
 use App\Http\Controllers\UserController;       // Import controller User
+use App\Http\Controllers\User\RequestController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin', function () {
             // Ini akan me-render dashboard admin yang sudah kamu buat sebelumnya
             // Jika dashboard admin adalah layout utama, maka bisa langsung return view
-            return view('dashboard.admin'); // Ganti 'dashboard.admin' jika nama view Anda 'admin.dashboard'
+            return view('dashboard.admin');
+            Route::get('/assign-orders', [OrderController::class, 'adminAssignOrders'])->name('admin.assign_orders.index'); // Ganti 'dashboard.admin' jika nama view Anda 'admin.dashboard'
         })->name('admin.dashboard');
 
         // Route untuk Manajemen Pembayaran (hanya bisa diakses Admin)
@@ -79,6 +82,11 @@ Route::middleware('auth')->group(function () {
             // Ganti 'dashboard.user' jika nama view Anda berbeda
             return view('dashboard.user', ['role' => 'User']);
         })->name('user.dashboard');
+
+        Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
+        Route::get('requests/create', [RequestController::class, 'create'])->name('requests.create');
+        Route::post('requests', [RequestController::class, 'store'])->name('requests.store');
+        Route::get('/user/requests/create', [RequestController::class, 'create'])->name('user.requests.create');
         // Tambahkan rute user lainnya di sini
     });
 
@@ -93,6 +101,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/technician-orders', [DashboardApiController::class, 'getTechnicianOrders']);
     Route::get('/api/user-stats', [DashboardApiController::class, 'getUserStats']); // Data statistik user untuk dashboard
     Route::get('/api/activity-log', [DashboardApiController::class, 'getActivityLog']);
+    Route::get('/assign-orders', [OrderController::class, 'adminAssignOrders'])->name('admin.assign_orders.index');
+    Route::get('/work-orders', [OrderController::class, 'indexForTechnician'])->name('teknisi.work_orders.index');
+// ...
+
+    Route::middleware(['role:teknisi'])->group(function () {
+        Route::get('/api/teknisi-orders', [DashboardApiController::class, 'getTechnicianSpecificOrders'])->name('api.teknisi.orders');
+    });
 });
 
 

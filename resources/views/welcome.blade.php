@@ -234,7 +234,7 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center">
                 <div class="mb-10 lg:mb-0">
-                    <img src="{{ asset('storage/images/LOGOHIRAWRPutih.png') }}" alt="Hirawr Logo Footer" class="h-16 w-auto mb-6">
+                    <img src="{{ asset('images/logo.png') }}" alt="Hirawr Logo Footer" class="h-16 w-auto mb-6">
                     <div class="flex space-x-4">
                         <a href="https://www.instagram.com/hirawr.store?igsh=enViMmRwa2hmbTI3" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-icon-circle">
                             <i class="fab fa-instagram"></i>

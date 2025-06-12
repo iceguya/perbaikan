@@ -37,9 +37,17 @@ class UserController extends Controller
             // Tambahkan validasi lain jika ada kolom yang bisa diupdate
         ]);
 
-        $user->update($request->all()); // Update semua data yang divalidasi
+        $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->role = $validatedData['role'];
+            // Jika ada kolom lain yang divalidasi dan ingin diupdate, tambahkan baris ini
+            $user->save(); // Simpan perubahan ke database
 
-        return redirect()->route('users.index')->with('success', 'Pengguna berhasil diperbarui!');
+            // Cara 2: Update semua data yang sudah divalidasi (jika $fillable di model User sudah diatur dengan benar)
+            // $user->update($validatedData); // Ganti ini dengan cara 1 jika ada masalah atau ingin lebih eksplisit
+
+            // 3. Redirect dengan Pesan Sukses
+            return redirect()->route('users.index')->with('success', 'Pengguna berhasil diperbarui!');
     }
 
     /**
