@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Order; // Pastikan model Order di-import
 use App\Models\Payment; // Pastikan model Payment di-import
+use Illuminate\Support\Facades\Log; // Import Log facade
 // use App\Models\ActivityLog; // Jika Anda punya model ActivityLog, import di sini
 
 class DashboardApiController extends Controller
@@ -31,7 +32,7 @@ class DashboardApiController extends Controller
                 'completedOrders' => $completedOrders,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching order stats: ' . $e->getMessage());
+            Log::error('Error fetching order stats: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch order stats'], 500);
         }
     }
@@ -66,7 +67,7 @@ class DashboardApiController extends Controller
                 'monthProfit' => $monthProfit,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching revenue recap: ' . $e->getMessage());
+            Log::error('Error fetching revenue recap: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch revenue recap'], 500);
         }
     }
@@ -85,7 +86,7 @@ class DashboardApiController extends Controller
 
             return response()->json($orders);
         } catch (\Exception $e) {
-            \Log::error('Error fetching technician orders: ' . $e->getMessage());
+            Log::error('Error fetching technician orders: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch technician orders'], 500);
         }
     }
@@ -107,7 +108,7 @@ class DashboardApiController extends Controller
                 'activeUsersToday' => $activeUsersToday,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching user stats: ' . $e->getMessage());
+            Log::error('Error fetching user stats: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch user stats'], 500);
         }
     }
@@ -143,7 +144,7 @@ class DashboardApiController extends Controller
 
             return response()->json($logs);
         } catch (\Exception $e) {
-            \Log::error('Error fetching activity log: ' . $e->getMessage());
+            Log::error('Error fetching activity log: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch activity log'], 500);
         }
     }
@@ -195,7 +196,7 @@ class DashboardApiController extends Controller
             return response()->json($formattedOrders);
 
         } catch (\Exception $e) {
-            \Log::error('Error fetching technician specific orders: ' . $e->getMessage());
+            Log::error('Error fetching technician specific orders: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch technician orders.'], 500);
         }
     }

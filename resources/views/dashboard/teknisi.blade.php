@@ -28,6 +28,7 @@
             .line-clamp-2 {
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
+                line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
@@ -107,7 +108,7 @@
                 // Mengambil token CSRF dari meta tag Laravel
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                const response = await fetch('{{ route('api.teknisi.orders') }}', {
+                const response = await fetch("{{ route('api.teknisi.orders') }}", {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest', // Penting untuk Laravel menerima ini sebagai AJAX

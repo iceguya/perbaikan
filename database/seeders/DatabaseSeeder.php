@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Models\Order;
 
 
 class DatabaseSeeder extends Seeder

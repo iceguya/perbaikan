@@ -25,7 +25,7 @@
                 <div class="lg:col-span-6 text-center lg:text-left">
                     <h1 class="mt-4 text-4xl font-extrabold text-white sm:mt-5 sm:text-5xl lg:mt-6 xl:text-6xl">
                         Explore Over <br class="hidden md:block">
-                        <span class="block text-indigo-200 inline">HIRAWR</span> Opportunities
+                        <span class="block text-indigo-200">HIRAWR</span> Opportunities
                     </h1>
                     <p class="mt-3 text-base text-indigo-100 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
                         Find your dream job among thousands of listings.
