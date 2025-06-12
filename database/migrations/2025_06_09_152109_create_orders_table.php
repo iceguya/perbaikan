@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('status')->default('pending'); // Status pesanan: pending, assigned, in_progress, completed, canceled, rejected
 
             // Kolom untuk penugasan ke teknisi
-            $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->onDelete('set null');
+                $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->onDelete('set null');
 
             // Kolom untuk informasi pelanggan (jika belum ada di tabel user yang merequest)
             $table->string('customer_name')->nullable();

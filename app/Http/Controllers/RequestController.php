@@ -3,43 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\UserRequest; // Pastikan model Request Anda di-import dengan nama yang benar, misal UserRequest
+use App\Models\UserRequest; // Sesuaikan dengan nama model Anda
 
 class RequestController extends Controller
 {
-    /**
-     * Display a listing of the requests.
-     */
-    public function index()
-    {
-        // Ambil permintaan yang dibuat oleh user yang sedang login
-        // Asumsi model User memiliki relasi 'requests' ke model UserRequest
-        $requests = auth()->user()->requests()->latest()->paginate(10);
+    // ... (metode index, create)
 
-        return view('user.requests.index', compact('requests')); // Ini akan me-render daftar permintaan
-    }
-
-    /**
-     * Show the form for creating a new request.
-     */
-    public function create()
-    {
-        return view('user.requests.create'); // Ini akan me-render form 'buat permintaan'
-    }
-
-    // Anda juga akan membutuhkan method 'store' untuk menyimpan data request
-    /*
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'subject' => 'required|string|max:255',
-            'description' => 'required|string',
-            // Tambahkan validasi lain sesuai kolom tabel permintaan Anda
+            'device_type' => 'nullable|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'model_number' => 'nullable|string|max:255',
+            'description' => 'required|string|min:10',
         ]);
 
-        auth()->user()->requests()->create($validatedData); // Asumsi user memiliki relasi 'requests'
+        $requestData = array_merge($validatedData, [
+            'user_id' => auth()->id(),
+            'status' => 'pending', // <<< PASTIKAN STATUS DEFAULT INI DIISI (misal: 'pending', 'new', 'submitted')
+            'assigned_to_user_id' => null, // Pastikan awalnya null
+        ]);
+
+        UserRequest::create($requestData); // Simpan ke tabel 'service_requests'
 
         return redirect()->route('user.requests.index')->with('success', 'Permintaan Anda berhasil diajukan!');
     }
-    */
 }

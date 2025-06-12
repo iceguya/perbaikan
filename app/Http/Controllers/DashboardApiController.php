@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Order; // Pastikan model Order di-import
-use App\Models\Payment; // Pastikan model Payment di-import
+use App\Models\Payment; 
+use App\Models\UserRequest;// Pastikan model Payment di-import
 use Illuminate\Support\Facades\Log; // Import Log facade
 // use App\Models\ActivityLog; // Jika Anda punya model ActivityLog, import di sini
 
@@ -78,19 +79,35 @@ class DashboardApiController extends Controller
     public function getTechnicianOrders()
     {
         try {
-            // Mengambil pesanan yang masih pending atau baru ditugaskan (belum selesai)
-            $orders = Order::whereIn('status', ['pending', 'assigned', 'awaiting_assignment'])
-                            ->latest()
-                            ->limit(5)
-                            ->get(['id', 'status']);
+            // Ambil service requests yang belum ditugaskan atau masih pending
+            $requests = UserRequest::whereIn('status', ['pending', 'new', 'submitted']) // <<< AMBIL DARI UserRequest
+                                ->with('user') // Eager load user yang mengajukan
+                                ->latest()
+                                ->limit(5)
+                                ->get([
+                                    'id',
+                                    'description',
+                                    'status',
+                                    'user_id', // Penting untuk relasi user
+                                ]);
 
-            return response()->json($orders);
+            $formattedRequests = $requests->map(function ($requestItem) {
+                $userName = $requestItem->user ? $requestItem->user->name : 'Pengguna Tidak Dikenal';
+                return [
+                    'id' => $requestItem->id,
+                    'description' => $requestItem->description,
+                    'status' => $requestItem->status,
+                    'requested_by' => $userName, // Menambahkan info pemohon
+                ];
+            });
+
+            return response()->json($formattedRequests);
+
         } catch (\Exception $e) {
-            Log::error('Error fetching technician orders: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to fetch technician orders'], 500);
+            \Log::error('Error fetching admin pending requests: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch pending requests.'], 500);
         }
     }
-
     /**
      * Mengambil statistik pengguna.
      */
@@ -152,39 +169,73 @@ class DashboardApiController extends Controller
     public function getTechnicianSpecificOrders(Request $request)
 {
     try {
-        $user = $request->user();
+            $user = $request->user();
 
-        if ($user->role !== 'teknisi') {
-            return response()->json(['message' => 'Akses ditolak.'], 403);
-        }
+            if ($user->role !== 'teknisi') {
+                return response()->json(['message' => 'Akses ditolak. Hanya teknisi yang bisa melihat pesanan ini.'], 403);
+            }
 
-        // Ganti Model dari Order ke ServiceRequest dan sesuaikan nama kolom
-        $orders = ServiceRequest::where('assigned_to_id', $user->id) // Kolom yang benar adalah 'assigned_to_id'
-                       ->whereIn('status', ['assigned', 'in_progress']) // Hanya tampilkan yang relevan
-                       ->with('user') // Ambil data user pembuat request
-                       ->orderBy('created_at', 'desc')
-                       ->get();
+            // Ambil service requests yang ditugaskan kepada teknisi ini
+            $requests = UserRequest::where('assigned_to_user_id', $user->id) // <<< AMBIL DARI UserRequest
+                           ->whereNotIn('status', ['completed', 'canceled', 'rejected'])
+                           ->orderBy('created_at', 'desc')
+                           ->get([
+                               'id',
+                               'description',
+                               'status',
+                               'device_type', // Contoh: tampilkan jenis alat
+                           ]);
 
-        $formattedOrders = $orders->map(function ($order) {
-            $statusMapping = [
-                'assigned' => 'in-process', // Map 'assigned' dari backend ke 'in-process' untuk display di frontend
-                'in_progress' => 'in-process',
-            ];
+            $formattedRequests = $requests->map(function ($requestItem) {
+                $statusMapping = [
+                    'pending' => 'pending',
+                    'new' => 'pending',
+                    'submitted' => 'pending',
+                    'assigned' => 'in-process',
+                    'in_progress' => 'in-process',
+                    'completed' => 'completed',
+                ];
 
-            return [
-                'id' => 'REQ-'.$order->id,
-                'description' => $order->description,
-                'status' => $statusMapping[$order->status] ?? $order->status,
-                'details' => 'Dari: ' . ($order->user->name ?? 'N/A') . ' | Perangkat: ' . $order->device_type,
-            ];
-        });
+                return [
+                    'id' => $requestItem->id,
+                    'description' => $requestItem->description,
+                    'status' => $statusMapping[$requestItem->status] ?? $requestItem->status,
+                    'details' => 'Jenis Alat: ' . ($requestItem->device_type ?? 'N/A'),
+                ];
+            });
 
-        return response()->json($formattedOrders);
+            return response()->json($formattedRequests);
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
+            \Log::error('Error fetching technician specific requests: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch technician requests.'], 500);
+        } catch (\Exception $e) {
         \Log::error('Error fetching technician specific orders: ' . $e->getMessage());
         return response()->json(['error' => 'Gagal memuat pesanan teknisi.'], 500);
     }
 }
+    use App\Models\UserRequest; // Sesuaikan dengan nama model Anda
+
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'device_type' => 'nullable|string|max:255',
+        'brand' => 'nullable|string|max:255',
+        'model_number' => 'nullable|string|max:255',
+        'description' => 'required|string|min:10',
+        // ... validasi kolom lain
+    ]);
+
+    $requestData = array_merge($validatedData, [
+        'user_id' => auth()->id(),
+        'status' => 'pending', // <<< PASTIKAN STATUS DEFAULT INI DIISI DI SINI
+        // Atau 'status' => 'new_request' atau 'submitted'
+    ]);
+
+    UserRequest::create($requestData); // Simpan ke tabel 'service_requests'
+
+    return redirect()->route('user.requests.index')->with('success', 'Permintaan Anda berhasil diajukan!');
+}
+
 
 }

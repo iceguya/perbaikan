@@ -1,37 +1,41 @@
 <?php
 
-namespace App\Http\Controllers; // <<<< PASTIKAN NAMESPACE INI BENAR
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Order; // Pastikan ini di-import
-use App\Models\User;  // Pastikan ini di-import
+// use App\Models\Order; // Tidak lagi digunakan di sini jika menampilkan requests
+use App\Models\User;
+use App\Models\UserRequest; // <<< IMPORT MODEL UserRequest (sesuaikan nama)
 
-class OrderController extends Controller // <<<< PASTIKAN NAMA KELAS INI BENAR
+class OrderController extends Controller
 {
-    // Ini adalah metode yang kita bahas sebelumnya
-    public function adminAssignOrders()
-    {
-        try {
-            $ordersToAssign = Order::whereIn('status', ['pending', 'awaiting_assignment'])
-                                    ->orderBy('created_at', 'asc')
-                                    ->paginate(10);
-
-            $technicians = User::where('role', 'teknisi')->get(['id', 'name']);
-
-            return view('admin.assign_orders.manage-assignments', compact('ordersToAssign', 'technicians'));
-        } catch (\Exception $e) {
-            \Log::error('Error in OrderController@adminAssignOrders: ' . $e->getMessage());
-            abort(500, 'Terjadi kesalahan saat memuat halaman penugasan. Cek log server.');
-        }
-    }
-
-    // Metode lain seperti indexForTechnician, dll.
+    /**
+     * Menampilkan daftar semua service requests untuk teknisi (Work Orders).
+     */
     public function indexForTechnician()
     {
-        // ... (logika indexForTechnician)
-        $orders = Order::orderBy('created_at', 'desc')->paginate(10);
-        return view('teknisi.work-orders', compact('orders'));
+        $requests = UserRequest::with(['user', 'assignedToUser']) // Eager load pemohon dan teknisi yang ditugaskan
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(10); // Paginasi
+
+        // Ubah variabel yang dikirimkan ke view
+        return view('teknisi.work-orders', compact('requests'));
     }
 
-    // ... (metode edit, update, destroy jika ada)
+    public function assignOrder()
+{
+    // ... kode Anda untuk mengambil data requestsToAssign
+    // Pastikan Anda mendapatkan data ini dari database atau sumber lain
+    // Jika tidak ada data yang ditemukan, pastikan $requestsToAssign tetap didefinisikan sebagai array kosong
+    $requestsToAssign = []; // Inisialisasi awal, atau ambil dari database
+    // Contoh mengambil dari database:
+    // $requestsToAssign = RequestModel::where('status', 'pending_assignment')->get();
+
+    // Pastikan Anda melewatkan variabel ini ke view
+    return view('admin.orders.assign-order', compact('requestsToAssign'));
+    // ATAU
+    // return view('admin.orders.assign-order')->with('requestsToAssign', $requestsToAssign);
+}
+
+    // ... (metode adminAssignOrders, assign)
 }

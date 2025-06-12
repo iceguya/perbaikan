@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardApiController; // Import controller API
 use App\Http\Controllers\UserController;       // Import controller User
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
             // Jika dashboard admin adalah layout utama, maka bisa langsung return view
             return view('dashboard.admin');
             Route::get('/assign-orders', [OrderController::class, 'adminAssignOrders'])->name('admin.assign_orders.index'); // Ganti 'dashboard.admin' jika nama view Anda 'admin.dashboard'
+            Route::post('/assign-orders/{requestItem}/assign-technician', [OrderController::class, 'assign'])->name('admin.assign_orders.assign'); // <<< TAMBAHKAN INI
         })->name('admin.dashboard');
 
         // Route untuk Manajemen Pembayaran (hanya bisa diakses Admin)
@@ -77,6 +79,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/assign-orders', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'index'])->name('admin.orders.index');
         Route::patch('/admin/orders/{serviceRequest}/approve', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'approve'])->name('admin.orders.approve');
         Route::post('/admin/orders/{serviceRequest}/assign', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'assign'])->name('admin.orders.assign');
+        // Contoh di routes/web.php
+        Route::get('/admin/orders/assign', [App\Http\Controllers\Admin\OrderController::class, 'assignOrder'])->name('admin.orders.assign');
     });
 
     // Dashboard dan fitur khusus Teknisi

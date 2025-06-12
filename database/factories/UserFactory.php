@@ -3,21 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash; // Mungkin Anda butuhkan ini jika password diatur di sini
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-
-public function teknisi()
-{
-    return $this->state(fn (array $attributes) => [
-        'role' => 'teknisi',
-    ]);
-}
-
-
 class UserFactory extends Factory
 {
     /**
@@ -36,10 +27,11 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('password'), // Pastikan Hash di-import jika tidak ada ini
             'remember_token' => Str::random(10),
+            'role' => fake()->randomElement(['user']), // Default role
         ];
-    }
+    } // <--- PASTIKAN KURUNG KURAWAL PENUTUP INI ADA di sini
 
     /**
      * Indicate that the model's email address should be unverified.
@@ -48,6 +40,21 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    // Metode 'states' yang Anda tambahkan
+    public function admin(): static // <--- Ini adalah baris 13 dari error Anda
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
+
+    public function teknisi(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'teknisi',
         ]);
     }
 }

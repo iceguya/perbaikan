@@ -6,14 +6,10 @@ use App\Models\User;
 use App\Http\Controllers\DashboardController;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Order;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
-use App\Models\Order;
-
-=======
 use App\Models\UserRequest; 
->>>>>>> 6b6f83cddd511ecdb28869c42b1e42e2b6739f7b
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,15 +31,6 @@ class DatabaseSeeder extends Seeder
         'role' => 'teknisi',
     ]);
 
-<<<<<<< HEAD
-    User::create([
-        'name' => 'User',
-        'email' => 'user@mail.com',
-        'password' => Hash::make('password'),
-        'role' => 'user',
-    ]);
-}
-=======
         // 2. Buat User Tambahan Menggunakan Factory (untuk mengisi halaman manajemen user)
         // Pastikan Anda sudah mengatur UserFactory.php dengan 'admin()', 'teknisi()', 'user()' states
         User::factory(10)->create([
@@ -67,12 +54,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(OrderSeeder::class);
 
         // B. Atau, buat data Order langsung di sini menggunakan OrderFactory:
-        // Pastikan Anda sudah memiliki App\Models\Order dan database/factories/OrderFactory.php
-        Order::factory(30)->create(); // Membuat 30 order acak untuk dummy data
+        // Pastikan Anda sudah memiliki App\Models\Order dan database/factories/OrderFactory.phh
 
         // 4. Panggil PaymentsTableSeeder
         // Ini akan menggunakan order yang baru saja dibuat
         $this->call(PaymentsTableSeeder::class);
     }
->>>>>>> 6b6f83cddd511ecdb28869c42b1e42e2b6739f7b
 }
