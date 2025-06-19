@@ -28,6 +28,8 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pelanggan</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Keluhan</th>
+                                    {{-- KOLOM BARU DITAMBAHKAN DI SINI --}}
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Foto Kerusakan</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                                 </tr>
@@ -40,6 +42,16 @@
                                         <td class="px-6 py-4 text-sm text-gray-600">
                                             <p class="font-bold">{{ $serviceRequest->device_type }}</p>
                                             <p>{{ Str::limit($serviceRequest->description, 50) }}</p>
+                                        </td>
+                                        {{-- ISI UNTUK KOLOM FOTO KERUSAKAN --}}
+                                        <td class="px-6 py-4 text-sm font-medium">
+                                            @if($serviceRequest->damage_photo_path)
+                                                <a href="{{ Storage::url($serviceRequest->damage_photo_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">
+                                                    Lihat Foto
+                                                </a>
+                                            @else
+                                                <span>-</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize
@@ -78,20 +90,16 @@
                                                     <span class="font-semibold">{{ $serviceRequest->technician->name ?? 'N/A' }}</span>
                                                 </div>
                                             @elseif ($serviceRequest->status === 'pending_payment')
-                                                <form action="{{ route('admin.orders.complete', $serviceRequest) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="px-3 py-1 bg-purple-600 text-white rounded-md text-xs hover:bg-purple-700">
-                                                        Proses Pembayaran
-                                                    </button>
-                                                </form>
+                                                <a href="{{ route('admin.payments.index') }}" class="px-3 py-1 bg-purple-600 text-white rounded-md text-xs hover:bg-purple-700">
+                                                    Proses Pembayaran
+                                                </a>
                                             @elseif ($serviceRequest->status === 'completed')
                                                 <span class="text-sm text-gray-500">Selesai</span>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td class="px-6 py-4 text-center" colspan="5">Tidak ada permintaan yang perlu ditangani.</td></tr>
+                                    <tr><td class="px-6 py-4 text-center" colspan="6">Tidak ada permintaan yang perlu ditangani.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>

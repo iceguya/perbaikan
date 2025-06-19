@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 md:p-8 text-gray-900">
-                    <form method="POST" action="{{ route('user.requests.store') }}">
+                    <form method="POST" action="{{ route('user.requests.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div>
@@ -26,16 +26,21 @@
 
                         <div class="mt-4">
                             <x-input-label for="model_number" :value="__('Nomor Model / Seri')" />
-                            {{-- PERBAIKAN: name="series" diubah menjadi "model_number" --}}
                             <x-text-input id="model_number" class="block mt-1 w-full" type="text" name="model_number" :value="old('model_number')" placeholder="Contoh: Galaxy S21, Inspiron 14, A2337 (Opsional)" />
                             <x-input-error :messages="$errors->get('model_number')" class="mt-2" />
                         </div>
 
                         <div class="mt-4">
                             <x-input-label for="description" :value="__('Jelaskan Keluhan atau Kerusakan Anda')" />
-                            {{-- PERBAIKAN: name="complaint" diubah menjadi "description" --}}
                             <textarea id="description" name="description" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="5" required>{{ old('description') }}</textarea>
                             <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label for="damage_photo" class="block text-sm font-medium text-gray-700">Foto Kerusakan (Opsional)</label>
+                            <input type="file" name="damage_photo" id="damage_photo" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, JPEG. Maksimal 2MB.</p>
+                            <x-input-error :messages="$errors->get('damage_photo')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end mt-6">

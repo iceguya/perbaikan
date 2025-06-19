@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\ServiceRequest; // Ganti Order dengan ServiceRequest
 use App\Models\Payment;
+use App\Models\ServiceRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage; // PENTING: Import Storage
 
 class DashboardApiController extends Controller
 {
@@ -21,7 +22,7 @@ class DashboardApiController extends Controller
 
             // Menggunakan model ServiceRequest
             $todayOrders = ServiceRequest::whereDate('created_at', $today)->count();
-            $monthOrders = ServiceRequest::whereMonth('created_at', $startOfMonth)->count();
+            $monthOrders = ServiceRequest::where('created_at', '>=', $startOfMonth)->count();
             $pendingOrders = ServiceRequest::where('status', 'submitted')->count();
             $completedOrders = ServiceRequest::where('status', 'completed')->count();
 
@@ -46,13 +47,13 @@ class DashboardApiController extends Controller
             $today = now()->today();
             $startOfMonth = now()->startOfMonth();
 
-            $todayRevenue = Payment::whereDate('payment_date', now()->today())
-                               ->where('status', 'completed') // <-- HANYA MENGAMBIL YANG COMPLETED
-                               ->sum('amount');
+            $todayRevenue = Payment::whereDate('payment_date', $today)
+                                   ->where('status', 'completed')
+                                   ->sum('amount');
 
-        $monthRevenue = Payment::whereMonth('payment_date', now()->startOfMonth())
-                               ->where('status', 'completed') // <-- HANYA MENGAMBIL YANG COMPLETED
-                               ->sum('amount');
+            $monthRevenue = Payment::where('payment_date', '>=', $startOfMonth)
+                                   ->where('status', 'completed')
+                                   ->sum('amount');
 
             $todayProfit = $todayRevenue * 0.30;
             $monthProfit = $monthRevenue * 0.30;
@@ -75,7 +76,6 @@ class DashboardApiController extends Controller
     public function getTechnicianOrders()
     {
         try {
-            // Menggunakan ServiceRequest dan status baru
             $orders = ServiceRequest::whereIn('status', ['submitted', 'approved'])
                             ->latest()
                             ->limit(5)
@@ -113,7 +113,6 @@ class DashboardApiController extends Controller
     public function getActivityLog()
     {
         try {
-            // Menggunakan data dari ServiceRequest
             $latestRequest = ServiceRequest::with('user')->latest()->first();
             $latestPayment = Payment::latest()->first();
             $latestUser = User::latest()->first();
@@ -129,7 +128,6 @@ class DashboardApiController extends Controller
                 $logs[] = ['description' => 'Pengguna baru terdaftar: ' . $latestUser->name . '.', 'created_at' => $latestUser->created_at->toDateTimeString()];
             }
             
-            // Urutkan berdasarkan waktu dan ambil 5 teratas
             usort($logs, fn($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
             $logs = array_slice($logs, 0, 5);
             
@@ -160,7 +158,7 @@ class DashboardApiController extends Controller
 
             $formattedOrders = $orders->map(function ($order) {
                 $statusMapping = [
-                    'assigned' => 'in-process',
+                    'assigned' => 'assigned',
                     'in_progress' => 'in-process',
                 ];
 
@@ -169,6 +167,7 @@ class DashboardApiController extends Controller
                     'description' => $order->description,
                     'status' => $statusMapping[$order->status] ?? $order->status,
                     'details' => 'Dari: ' . ($order->user ? $order->user->name : 'User Dihapus') . ' | Perangkat: ' . $order->device_type,
+                    'damage_photo_url' => $order->damage_photo_path ? Storage::url($order->damage_photo_path) : null,
                 ];
             });
 

@@ -17,6 +17,7 @@ class ServiceRequest extends Model
         'brand',
         'model_number',
         'description',
+        'damage_photo_path',
         'status',
         'assigned_to_id',
     ];

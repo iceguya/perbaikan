@@ -9,32 +9,46 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 md:p-8 text-gray-900">
-                    {{-- PERBAIKAN PADA BARIS DI BAWAH INI --}}
-                    <form method="POST" action="{{ route('user.requests.store') }}">
+                    {{-- PENTING: Pastikan form memiliki enctype untuk upload file --}}
+                    <form method="POST" action="{{ route('user.requests.store') }}" enctype="multipart/form-data">
                         @csrf
 
+                        {{-- Input Jenis Perangkat --}}
                         <div>
                             <x-input-label for="device_type" :value="__('Jenis Perangkat')" />
                             <x-text-input id="device_type" class="block mt-1 w-full" type="text" name="device_type" :value="old('device_type')" required autofocus placeholder="Contoh: Laptop, Smartphone, Televisi" />
                             <x-input-error :messages="$errors->get('device_type')" class="mt-2" />
                         </div>
 
+                        {{-- Input Merek --}}
                         <div class="mt-4">
                             <x-input-label for="brand" :value="__('Merek')" />
                             <x-text-input id="brand" class="block mt-1 w-full" type="text" name="brand" :value="old('brand')" placeholder="Contoh: Samsung, Dell, Apple (Opsional)" />
                             <x-input-error :messages="$errors->get('brand')" class="mt-2" />
                         </div>
 
+                        {{-- Input Nomor Model --}}
                         <div class="mt-4">
                             <x-input-label for="model_number" :value="__('Nomor Model / Seri')" />
                             <x-text-input id="model_number" class="block mt-1 w-full" type="text" name="model_number" :value="old('model_number')" placeholder="Contoh: Galaxy S21, Inspiron 14, A2337 (Opsional)" />
                             <x-input-error :messages="$errors->get('model_number')" class="mt-2" />
                         </div>
 
+                        {{-- Input Deskripsi --}}
                         <div class="mt-4">
                             <x-input-label for="description" :value="__('Jelaskan Keluhan atau Kerusakan Anda')" />
                             <textarea id="description" name="description" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="5" required>{{ old('description') }}</textarea>
                             <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                        </div>
+                        
+                        {{-- =============================================== --}}
+                        {{--    INI BAGIAN YANG SEHARUSNYA MUNCUL           --}}
+                        {{-- =============================================== --}}
+                        <div class="mt-4">
+                            <label for="damage_photo" class="block text-sm font-medium text-gray-700">Foto Kerusakan (Opsional)</label>
+                            <input type="file" name="damage_photo" id="damage_photo" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, JPEG. Maksimal 2MB.</p>
+                            <x-input-error :messages="$errors->get('damage_photo')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end mt-6">

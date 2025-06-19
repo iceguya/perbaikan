@@ -24,9 +24,6 @@
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                             {{ __('Manage Users') }}
                         </x-nav-link>
-                        <x-nav-link href="#">
-                            {{ __('Reports') }}
-                        </x-nav-link>
                     @endif
 
                     <!-- Navigation untuk Teknisi -->
@@ -141,9 +138,6 @@
                 {{-- Saya juga perbaiki link untuk Manage Orders di sini --}}
                 <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.index')">
                     {{ __('Manage Orders') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="#">
-                    {{ __('Reports') }}
                 </x-responsive-nav-link>
             @endif
 

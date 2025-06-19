@@ -7,6 +7,7 @@ use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceRequestController extends Controller
 {
@@ -40,9 +41,16 @@ class ServiceRequestController extends Controller
             'brand' => 'nullable|string|max:255',
             'model_number' => 'nullable|string|max:255',
             'description' => 'required|string|min:20',
+            'damage_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
+
+        if ($request->hasFile('damage_photo')) {
+        // Simpan foto dan dapatkan path-nya
+            $path = $request->file('damage_photo')->store('service_photos', 'public');
+            $validated['damage_photo_path'] = $path;
+            }
 
         ServiceRequest::create($validated);
 

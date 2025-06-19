@@ -79,27 +79,28 @@
             emptyMessage.classList.add("hidden");
 
             ordersData.forEach((order) => {
+                // 1. Ambil damage_photo_url dari data order
+                const { id, description, status, details, damage_photo_url } = order;
                 const statusClass = statusInfo[order.status] || statusInfo['assigned'];
                 const card = document.createElement("article");
                 card.setAttribute("tabindex", "0");
                 card.className = "shadow-light rounded-3xl bg-white p-8 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-blue-600";
                 
                 const orderIdNumber = order.id.replace('REQ-', '');
-                
-                // --- PERUBAHAN UTAMA DI SINI ---
-                // Membuat URL dengan placeholder, lalu menggantinya dengan ID asli
                 const actionUrl = `{{ route('teknisi.work-orders.complete', ['serviceRequest' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', orderIdNumber);
 
+                // 2. Modifikasi bagian <section> untuk menampilkan status dan link foto
                 card.innerHTML = `
                     <header class="mb-5">
-                        <h3 class="text-2xl font-extrabold text-gray-900 select-text mb-1" title="ID Pesanan ${order.id}">${order.id}</h3>
-                        <p class="text-gray-600 line-clamp-2 select-text" title="${order.description}">${order.description}</p>
-                        ${order.details ? `<p class="text-sm text-gray-500 mt-1">${order.details}</p>` : ''}
+                        <h3 class="text-2xl font-extrabold text-gray-900 select-text mb-1" title="ID Pesanan ${id}">${id}</h3>
+                        <p class="text-gray-600 line-clamp-2 select-text" title="${description}">${description}</p>
+                        ${details ? `<p class="text-sm text-gray-500 mt-1">${details}</p>` : ''}
                     </header>
-                    <section class="mb-6">
+                    <section class="mb-6 flex justify-between items-center">
                         <span class="inline-block px-4 py-1 rounded-full font-semibold uppercase text-sm ring-1 ${statusClass.text} ${statusClass.bg} ${statusClass.ring}">
                             ${statusClass.label}
                         </span>
+                        ${damage_photo_url ? `<a href="${damage_photo_url}" target="_blank" class="text-sm text-indigo-600 hover:underline font-medium">Lihat Foto</a>` : ''}
                     </section>
                     <footer class="mt-auto flex gap-4 flex-wrap">
                         ${
