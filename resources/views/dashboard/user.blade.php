@@ -19,8 +19,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-12 lg:mt-0 lg:col-span-5 lg:flex lg:justify-center">
-                        <img class="max-w-full h-auto rounded-lg shadow-2xl lg:max-h-[400px]" src="{{ asset('public/images/Teknisi.jpg') }}" alt="Teknisi sedang memperbaiki perangkat">
+                    <div class="mt-12 lg:mt-0 lg:col-span-5 lg:flex lg:justify-center lg:items-center animate-fade-in" style="animation-delay: 0.2s;">
+                        <img src="{{ asset('images/teknisi_Hirawr.jpg') }}" alt="Teknisi sedang memperbaiki laptop" class="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-cover rounded-full shadow-2xl border-4 border-white dark:border-gray-700">
                     </div>
                 </div>
             </div>

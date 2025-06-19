@@ -4,13 +4,21 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\DashboardApiController; // Import controller API
-use App\Http\Controllers\UserController;       // Import controller User
+use App\Http\Controllers\DashboardApiController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\OrderAssignmentController;
+use App\Http\Controllers\Technician\WorkOrderController;
+use App\Http\Controllers\ServiceRequestController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
+|
+| Di sini Anda dapat mendaftarkan rute web untuk aplikasi Anda. Rute-rute ini
+| dimuat oleh RouteServiceProvider dan semuanya akan ditugaskan ke
+| grup middleware "web". Buat sesuatu yang hebat!
+|
 */
 
 // Halaman utama
@@ -18,7 +26,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Otomatis redirect ke dashboard sesuai role
+// Otomatis redirect ke dashboard sesuai role setelah login
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
@@ -42,73 +50,73 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Dashboard dan fitur khusus Admin
-    // Pastikan 'admin.dashboard' mengarah ke view dashboard yang sebenarnya Anda gunakan
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin', function () {
-            // Ini akan me-render dashboard admin yang sudah kamu buat sebelumnya
-            // Jika dashboard admin adalah layout utama, maka bisa langsung return view
-            return view('dashboard.admin'); // Ganti 'dashboard.admin' jika nama view Anda 'admin.dashboard'
-        })->name('admin.dashboard');
+    // ===================================================================
+    // GRUP ROUTE UNTUK ADMIN
+    // ===================================================================
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', function () { return view('dashboard.admin'); })->name('dashboard');
+        
+        // Manajemen Order
+        Route::get('/orders', [OrderAssignmentController::class, 'index'])->name('orders.index');
+        Route::patch('/orders/{serviceRequest}/approve', [OrderAssignmentController::class, 'approve'])->name('orders.approve');
+        Route::post('/orders/{serviceRequest}/assign', [OrderAssignmentController::class, 'assign'])->name('orders.assign');
+        Route::patch('/orders/{serviceRequest}/complete', [OrderAssignmentController::class, 'complete'])->name('orders.complete');
 
-        // Route untuk Manajemen Pembayaran (hanya bisa diakses Admin)
-        Route::get('/manage-payments', [PaymentController::class, 'index'])->name('payments.index');
+        // Manajemen Pengguna
+        Route::get('/users', [UserController::class, 'index'])->name('users.index'); // Nama asli: admin.users.index
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // Route untuk Manajemen Pengguna (hanya bisa diakses Admin)
-        Route::get('/manage-users', [UserController::class, 'index'])->name('users.index'); // <-- Ini yang ditambahkan
-        Route::get('/manage-users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // Tampilkan form edit
-        Route::put('/manage-users/{user}', [UserController::class, 'update'])->name('users.update'); // Proses update data
-        Route::delete('/manage-users/{user}', [UserController::class, 'destroy'])->name('users.destroy'); // Proses hapus data
-        // Anda bisa menambahkan rute admin lain di sini
-        // Contoh: Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders');
+        // Manajemen Pembayaran
+        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+
+        // Rute baru untuk approve pembayaran
+        Route::patch('/payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
     });
 
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin', function () {
-            return view('dashboard.admin');
-        })->name('admin.dashboard');
+    // ===================================================================
+    // GRUP ROUTE UNTUK TEKNISI
+    // ===================================================================
+    Route::middleware(['role:teknisi'])->prefix('teknisi')->name('teknisi.')->group(function () {
+        Route::get('/', function () { return view('dashboard.teknisi'); })->name('dashboard');
+        
+        // Rute untuk teknisi menandai pekerjaan selesai
+        Route::patch('/work-orders/{serviceRequest}/complete', [WorkOrderController::class, 'complete'])->name('work-orders.complete');
+    });
+
+    // ===================================================================
+    // GRUP ROUTE UNTUK USER BIASA
+    // ===================================================================
+    Route::middleware(['role:user'])->prefix('user')->name('user.')->group(function () {
+        Route::get('/', function () { return view('dashboard.user'); })->name('dashboard');
+        
+        // Rute untuk membuat dan melihat permintaan servis
+        Route::get('/requests', [ServiceRequestController::class, 'index'])->name('requests.index');
+        Route::get('/requests/create', [ServiceRequestController::class, 'create'])->name('requests.create');
+        Route::post('/requests', [ServiceRequestController::class, 'store'])->name('requests.store');
+
+        Route::get('/requests/{serviceRequest}/pay', [PaymentController::class, 'createForUser'])->name('payments.create');
+        Route::post('/requests/{serviceRequest}/pay', [PaymentController::class, 'storeFromUser'])->name('payments.store');
+    });
+
+});
+
+
+// ===================================================================
+// GRUP ROUTE UNTUK SEMUA API
+// ===================================================================
+Route::middleware('auth')->prefix('api')->name('api.')->group(function() {
+    Route::get('/order-stats', [DashboardApiController::class, 'getOrderStats'])->name('order-stats');
+    Route::get('/revenue-recap', [DashboardApiController::class, 'getRevenueRecap'])->name('revenue-recap');
+    Route::get('/user-stats', [DashboardApiController::class, 'getUserStats'])->name('user-stats');
+    Route::get('/activity-log', [DashboardApiController::class, 'getActivityLog'])->name('activity-log');
+
+    // API untuk dashboard admin melihat order yang perlu diassign
+    Route::get('/technician-orders-view', [DashboardApiController::class, 'getTechnicianOrders'])->name('technician-orders-view');
     
-        // ... route admin lainnya
-        
-        // RUTE BARU UNTUK MANAJEMEN ORDER
-        Route::get('/admin/assign-orders', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'index'])->name('admin.orders.index');
-        Route::patch('/admin/orders/{serviceRequest}/approve', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'approve'])->name('admin.orders.approve');
-        Route::post('/admin/orders/{serviceRequest}/assign', [App\Http\Controllers\Admin\OrderAssignmentController::class, 'assign'])->name('admin.orders.assign');
-    });
-
-    // Dashboard dan fitur khusus Teknisi
-    Route::middleware(['role:teknisi'])->group(function () {
-        Route::get('/teknisi', function () {
-            // Ganti 'dashboard.teknisi' jika nama view Anda berbeda
-            return view('dashboard.teknisi', ['role' => 'Teknisi']);
-        })->name('teknisi.dashboard');
-        // Tambahkan rute teknisi lainnya di sini
-        Route::get('/api/teknisi-orders', [DashboardApiController::class, 'getTechnicianSpecificOrders'])->name('api.teknisi.orders');
-    });
-
-    // Dashboard dan fitur khusus User
-    Route::middleware(['role:user'])->group(function () {
-        Route::get('/user', function () {
-            return view('dashboard.user', ['role' => 'User']);
-        })->name('user.dashboard');
-        
-        // Rute untuk Submit dan My Requests
-        Route::get('/my-requests', [App\Http\Controllers\ServiceRequestController::class, 'index'])->name('requests.index');
-        Route::get('/requests/create', [App\Http\Controllers\ServiceRequestController::class, 'create'])->name('requests.create');
-        Route::post('/requests', [App\Http\Controllers\ServiceRequestController::class, 'store'])->name('requests.store');
-    });
-
-    // =========================================================================
-    // API Dashboard (TEMPATKAN DI SINI JIKA MAU DIAUTENTIKASI DULU)
-    // Jika API ini hanya untuk data dashboard yang diakses dari frontend yang sudah login,
-    // maka letakkan di dalam middleware 'auth' seperti ini.
-    // Pastikan juga Anda sudah mengimpor DashboardApiController di atas.
-    // =========================================================================
-    Route::get('/api/order-stats', [DashboardApiController::class, 'getOrderStats']);
-    Route::get('/api/revenue-recap', [DashboardApiController::class, 'getRevenueRecap']);
-    Route::get('/api/technician-orders', [DashboardApiController::class, 'getTechnicianOrders']);
-    Route::get('/api/user-stats', [DashboardApiController::class, 'getUserStats']); // Data statistik user untuk dashboard
-    Route::get('/api/activity-log', [DashboardApiController::class, 'getActivityLog']);
+    // API KHUSUS untuk teknisi mengambil data pekerjaannya
+    Route::get('/teknisi/orders', [DashboardApiController::class, 'getTechnicianSpecificOrders'])->name('teknisi.orders');
 });
 
 

@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Order; // Pastikan ini di-import
 use App\Models\User; 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule; // Pastikan ini di-import
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage; // Pastikan ini di-import
 
 class OrderController extends Controller // <<<< PASTIKAN NAMA KELAS INI BENAR
 {

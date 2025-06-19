@@ -62,7 +62,7 @@
                         Manajemen Pembayaran
                     </h4>
                     <p class="text-sm text-gray-700 mb-4">Kelola semua transaksi pembayaran, konfirmasi, dan riwayat.</p>
-                    <a href="/manage-payments" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md text-sm transition duration-200">
+                    <a href="{{ route('admin.payments.index') }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md text-sm transition duration-200">
                         Lihat & Kelola Pembayaran
                     </a>
                 </div>

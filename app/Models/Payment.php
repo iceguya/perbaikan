@@ -10,23 +10,37 @@ class Payment extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'order_id',
+        'service_request_id',
         'payment_method',
         'amount',
-        'status', // Contoh: 'pending', 'processing', 'completed', 'failed', 'refunded'
-        'transaction_id', // ID transaksi dari payment gateway (jika ada)
+        'status',
+        'proof_of_payment_path', // <-- TAMBAHKAN BARIS INI
+        'transaction_id',
         'payment_date',
         'notes',
     ];
 
-    protected $dates = ['payment_date'];
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected $casts = [
+        'payment_date' => 'datetime',
+        'amount' => 'decimal:2',
+    ];
 
     /**
-     * Get the order that owns the payment.
+     * Get the service request that owns the payment.
      */
-    public function order(): BelongsTo
+    public function serviceRequest(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(ServiceRequest::class);
     }
 }

@@ -35,19 +35,21 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($requests as $serviceRequest)
                                     <tr>
-                                        <td class="px-6 py-4">{{ $serviceRequest->id }}</td>
-                                        <td class="px-6 py-4">{{ $serviceRequest->user->name }}</td>
+                                        <td class="px-6 py-4">#{{ $serviceRequest->id }}</td>
+                                        <td class="px-6 py-4">{{ $serviceRequest->user->name ?? 'User Dihapus' }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-600">
                                             <p class="font-bold">{{ $serviceRequest->device_type }}</p>
                                             <p>{{ Str::limit($serviceRequest->description, 50) }}</p>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize
                                                 @if($serviceRequest->status == 'submitted') bg-yellow-100 text-yellow-800
                                                 @elseif($serviceRequest->status == 'approved') bg-blue-100 text-blue-800
                                                 @elseif($serviceRequest->status == 'assigned') bg-green-100 text-green-800
+                                                @elseif($serviceRequest->status == 'pending_payment') bg-purple-100 text-purple-800
+                                                @elseif($serviceRequest->status == 'completed') bg-gray-100 text-gray-800
                                                 @endif">
-                                                {{ $serviceRequest->status }}
+                                                {{ str_replace('_', ' ', $serviceRequest->status) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -61,8 +63,8 @@
                                                 <form action="{{ route('admin.orders.assign', $serviceRequest) }}" method="POST">
                                                     @csrf
                                                     <div class="flex items-center space-x-2">
-                                                        <select name="technician_id" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-sm">
-                                                            <option>Pilih Teknisi</option>
+                                                        <select name="technician_id" class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-sm" required>
+                                                            <option value="">Pilih Teknisi</option>
                                                             @foreach ($technicians as $technician)
                                                                 <option value="{{ $technician->id }}">{{ $technician->name }}</option>
                                                             @endforeach
@@ -75,6 +77,16 @@
                                                     Ditugaskan ke:<br>
                                                     <span class="font-semibold">{{ $serviceRequest->technician->name ?? 'N/A' }}</span>
                                                 </div>
+                                            @elseif ($serviceRequest->status === 'pending_payment')
+                                                <form action="{{ route('admin.orders.complete', $serviceRequest) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="px-3 py-1 bg-purple-600 text-white rounded-md text-xs hover:bg-purple-700">
+                                                        Proses Pembayaran
+                                                    </button>
+                                                </form>
+                                            @elseif ($serviceRequest->status === 'completed')
+                                                <span class="text-sm text-gray-500">Selesai</span>
                                             @endif
                                         </td>
                                     </tr>

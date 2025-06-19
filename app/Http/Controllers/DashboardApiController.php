@@ -46,13 +46,13 @@ class DashboardApiController extends Controller
             $today = now()->today();
             $startOfMonth = now()->startOfMonth();
 
-            $todayRevenue = Payment::whereDate('payment_date', $today)
-                                   ->where('status', 'completed')
-                                   ->sum('amount');
+            $todayRevenue = Payment::whereDate('payment_date', now()->today())
+                               ->where('status', 'completed') // <-- HANYA MENGAMBIL YANG COMPLETED
+                               ->sum('amount');
 
-            $monthRevenue = Payment::whereMonth('payment_date', $startOfMonth)
-                                   ->where('status', 'completed')
-                                   ->sum('amount');
+        $monthRevenue = Payment::whereMonth('payment_date', now()->startOfMonth())
+                               ->where('status', 'completed') // <-- HANYA MENGAMBIL YANG COMPLETED
+                               ->sum('amount');
 
             $todayProfit = $todayRevenue * 0.30;
             $monthProfit = $monthRevenue * 0.30;

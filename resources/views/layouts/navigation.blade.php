@@ -4,11 +4,11 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                {{-- <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
-                </div>
+                </div> --}}
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -21,7 +21,7 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin Panel') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                             {{ __('Manage Users') }}
                         </x-nav-link>
                         <x-nav-link href="#">
@@ -44,10 +44,10 @@
                         <x-nav-link :href="route('user.dashboard')" :active="request()->routeIs('user.dashboard')">
                             {{ __('My Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('requests.create')" :active="request()->routeIs('requests.create')">
+                        <x-nav-link :href="route('user.requests.create')" :active="request()->routeIs('user.requests.create')">
                             {{ __('Submit Request') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('requests.index')" :active="request()->routeIs('requests.index')">
+                        <x-nav-link :href="route('user.requests.index')" :active="request()->routeIs('user.requests.index')">
                             {{ __('My Requests') }}
                         </x-nav-link>
                     @endif
@@ -130,12 +130,17 @@
             </x-responsive-nav-link>
 
             <!-- Responsive Navigation untuk Admin -->
-            @if(Auth::user()->role === 'admin')
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+           @if(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Admin Panel') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                {{-- PERBAIKAN DI SINI --}}
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                     {{ __('Manage Users') }}
+                </x-responsive-nav-link>
+                {{-- Saya juga perbaiki link untuk Manage Orders di sini --}}
+                <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.index')">
+                    {{ __('Manage Orders') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="#">
                     {{ __('Reports') }}

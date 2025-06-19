@@ -14,9 +14,9 @@ class OrderAssignmentController extends Controller
      */
     public function index()
     {
-        // Ambil semua request yang butuh perhatian (baru disubmit atau sudah diapprove)
-        // Di dalam method index() di OrderAssignmentController.php
-    $requests = ServiceRequest::whereIn('status', ['submitted', 'approved', 'pending_payment']) // <-- TAMBAHKAN INI
+        // Ambil semua request yang butuh perhatian
+        $requests = ServiceRequest::whereIn('status', ['submitted', 'approved', 'assigned', 'pending_payment'])
+                            ->with(['user', 'technician']) // Eager load relasi untuk efisiensi
                             ->latest()
                             ->paginate(10);
 
@@ -31,9 +31,7 @@ class OrderAssignmentController extends Controller
      */
     public function approve(ServiceRequest $serviceRequest)
     {
-        // Ubah status menjadi 'approved'
         $serviceRequest->update(['status' => 'approved']);
-
         return redirect()->route('admin.orders.index')->with('success', "Permintaan #{$serviceRequest->id} telah disetujui.");
     }
 
@@ -46,13 +44,11 @@ class OrderAssignmentController extends Controller
             'technician_id' => 'required|exists:users,id',
         ]);
 
-        // Pastikan user yang dipilih adalah teknisi (keamanan tambahan)
         $technician = User::find($validated['technician_id']);
         if (!$technician || $technician->role !== 'teknisi') {
             return back()->with('error', 'User yang dipilih bukan teknisi.');
         }
 
-        // Update request dengan ID teknisi dan ubah status menjadi 'assigned'
         $serviceRequest->update([
             'assigned_to_id' => $validated['technician_id'],
             'status' => 'assigned',
@@ -61,14 +57,17 @@ class OrderAssignmentController extends Controller
         return redirect()->route('admin.orders.index')->with('success', "Permintaan #{$serviceRequest->id} telah ditugaskan ke {$technician->name}.");
     }
 
+    /**
+     * Menyelesaikan pesanan (setelah teknisi selesai bekerja).
+     */
     public function complete(ServiceRequest $serviceRequest)
-{
-    // Ubah status menjadi 'completed'
-    $serviceRequest->status = 'completed';
-    $serviceRequest->save();
+    {
+        // Ubah status final menjadi 'completed'
+        $serviceRequest->status = 'completed';
+        $serviceRequest->save();
 
-    // Tambahkan logika lain jika perlu, misalnya membuat invoice, dll.
+        // Di sini Anda bisa menambahkan logika pembuatan invoice, notifikasi ke user, dll.
 
-    return redirect()->route('admin.orders.index')->with('success', 'Pesanan #' . $serviceRequest->id . ' telah berhasil diselesaikan.');
-}
+        return redirect()->route('admin.orders.index')->with('success', 'Pesanan #' . $serviceRequest->id . ' telah berhasil diselesaikan dan ditutup.');
+    }
 }
