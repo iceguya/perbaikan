@@ -15,10 +15,10 @@ class OrderAssignmentController extends Controller
     public function index()
     {
         // Ambil semua request yang butuh perhatian (baru disubmit atau sudah diapprove)
-        $requests = ServiceRequest::whereIn('status', ['submitted', 'approved', 'assigned'])
-                                  ->with('user', 'technician') // Eager load relasi
-                                  ->latest()
-                                  ->paginate(15);
+        // Di dalam method index() di OrderAssignmentController.php
+    $requests = ServiceRequest::whereIn('status', ['submitted', 'approved', 'pending_payment']) // <-- TAMBAHKAN INI
+                            ->latest()
+                            ->paginate(10);
 
         // Ambil semua user yang memiliki role 'teknisi'
         $technicians = User::where('role', 'teknisi')->orderBy('name')->get();
@@ -56,8 +56,19 @@ class OrderAssignmentController extends Controller
         $serviceRequest->update([
             'assigned_to_id' => $validated['technician_id'],
             'status' => 'assigned',
-        ]);
+        ]);     
 
         return redirect()->route('admin.orders.index')->with('success', "Permintaan #{$serviceRequest->id} telah ditugaskan ke {$technician->name}.");
     }
+
+    public function complete(ServiceRequest $serviceRequest)
+{
+    // Ubah status menjadi 'completed'
+    $serviceRequest->status = 'completed';
+    $serviceRequest->save();
+
+    // Tambahkan logika lain jika perlu, misalnya membuat invoice, dll.
+
+    return redirect()->route('admin.orders.index')->with('success', 'Pesanan #' . $serviceRequest->id . ' telah berhasil diselesaikan.');
+}
 }

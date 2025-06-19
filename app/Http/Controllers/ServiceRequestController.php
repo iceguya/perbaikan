@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ServiceRequestController extends Controller
 {
@@ -47,5 +48,34 @@ class ServiceRequestController extends Controller
         ServiceRequest::create($validated);
 
         return redirect()->route('requests.index')->with('success', 'Permintaan Anda telah berhasil dikirim!');
+    }
+
+    public function updateStatusByTechnician(Request $request, ServiceRequest $serviceRequest)
+    {
+        // 1. Validasi input dari frontend
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                'string',
+                // Status yang diizinkan untuk diubah oleh teknisi
+                Rule::in(['in_progress', 'pending_payment']), 
+            ],
+        ]);
+        
+        // 2. Otorisasi: Pastikan user yang login adalah teknisi yang ditugaskan
+        if (Auth::id() !== $serviceRequest->assigned_to_id) {
+            return response()->json(['message' => 'Anda tidak berhak mengubah permintaan ini.'], 403);
+        }
+
+        // 3. Update status di database
+        $serviceRequest->status = $validated['status'];
+        $serviceRequest->save();
+
+        // 4. Beri respons sukses
+        return response()->json([
+            'message' => 'Status permintaan berhasil diperbarui.',
+            'service_request' => $serviceRequest,
+        ]);
+        dd(Auth::id(), $serviceRequest->assigned_to_id); 
     }
 }

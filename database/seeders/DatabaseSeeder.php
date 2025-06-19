@@ -3,61 +3,55 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Http\Controllers\DashboardController;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Order; // Pastikan model Order di-import
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */public function run(): void
-{
-    User::create([
-        'name' => 'Admin',
-        'email' => 'admin@mail.com',
-        'password' => Hash::make('password'),
-        'role' => 'admin',
-    ]);
+    public function run(): void
+    {
+        // Kosongkan tabel users dulu agar tidak error duplikat
+        User::query()->delete();
 
-    User::create([
-        'name' => 'Teknisi',
-        'email' => 'teknisi@mail.com',
-        'password' => Hash::make('password'),
-        'role' => 'teknisi',
-    ]);
+        // Buat akun admin dan teknisi secara manual
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@mail.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
 
-        // 2. Buat User Tambahan Menggunakan Factory (untuk mengisi halaman manajemen user)
-        // Pastikan Anda sudah mengatur UserFactory.php dengan 'admin()', 'teknisi()', 'user()' states
-        User::factory(20)->create([
+        User::create([
+            'name' => 'Teknisi',
+            'email' => 'teknisi@mail.com',
+            'password' => Hash::make('password'),
+            'role' => 'teknisi',
+        ]);
+
+        // Buat user biasa menggunakan factory
+        User::factory(10)->create([
             'role' => 'user',
             'email_verified_at' => now(),
         ]);
-        User::factory(5)->teknisi()->create([
+
+        // Buat teknisi acak dari factory dengan email unik
+        User::factory(5)->create([
+            'role' => 'teknisi',
             'email_verified_at' => now(),
         ]);
-        User::factory(2)->admin()->create([
+
+        // Buat admin tambahan dari factory dengan email unik
+        User::factory(2)->create([
+            'role' => 'admin',
             'email_verified_at' => now(),
         ]);
 
+        // Order dummy
+        // Order::factory(10)->create();
 
-        // --- PENTING: BAGIAN INI ---
-
-        // 3. Buat Data Order (Pesanan)
-        // Order harus dibuat SEBELUM PaymentsTableSeeder dipanggil
-        // Ada dua cara:
-        // A. Panggil OrderSeeder terpisah jika Anda memilikinya:
-        // $this->call(OrderSeeder::class);
-
-        // B. Atau, buat data Order langsung di sini menggunakan OrderFactory:
-        // Pastikan Anda sudah memiliki App\Models\Order dan database/factories/OrderFactory.php
-        Order::factory(30)->create(); // Membuat 30 order acak untuk dummy data
-
-        // 4. Panggil PaymentsTableSeeder
-        // Ini akan menggunakan order yang baru saja dibuat
+        // Seeder tambahan (misal untuk payment)
         $this->call(PaymentsTableSeeder::class);
     }
 }

@@ -41,4 +41,12 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+    public function teknisi()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role' => 'teknisi',
+            ];
+        });
+    }
 }
